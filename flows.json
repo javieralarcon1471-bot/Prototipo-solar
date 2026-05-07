@@ -677,7 +677,7 @@
     "type": "function",
     "z": "ec1243374864dca2",
     "name": "Climatizacion",
-    "func": "msg.payload = msg.payload;\nflow.set(\"climatizacion\", msg.payload);  // ← SOLO AGREGAS ESTA LÍNEA\nreturn msg;",
+    "func": "msg.payload = msg.payload;\nflow.set(\"climatizacion\", msg.payload);\nreturn msg;",
     "outputs": 1,
     "timeout": 0,
     "noerr": 0,
@@ -699,7 +699,7 @@
     "type": "function",
     "z": "ec1243374864dca2",
     "name": "Equipos",
-    "func": "msg.payload = msg.payload;\nflow.set(\"equipos\", msg.payload);  // ← AGREGAR\nreturn msg;",
+    "func": "msg.payload = msg.payload;\nflow.set(\"equipos\", msg.payload);\nreturn msg;",
     "outputs": 1,
     "timeout": 0,
     "noerr": 0,
@@ -721,7 +721,7 @@
     "type": "function",
     "z": "ec1243374864dca2",
     "name": "Iluminacion",
-    "func": "msg.payload = msg.payload;\nflow.set(\"iluminacion\", msg.payload);  // ← AGREGAR\nreturn msg;",
+    "func": "msg.payload = msg.payload;\nflow.set(\"iluminacion\", msg.payload);\nreturn msg;",
     "outputs": 1,
     "timeout": 0,
     "noerr": 0,
@@ -739,25 +739,17 @@
     ]
   },
   {
-    {
-  "id": "99c8f44ff563ffd5",
-  "type": "function",
-  "z": "ec1243374864dca2",
-  "name": "Ventilacion",
-  "func": "// Verificar qué llega\nnode.warn(\"=== NODO VENTILACION ===\");\nnode.warn(\"Payload recibido: \" + JSON.stringify(msg.payload));\n\n// Extraer el valor\nlet valor = msg.payload;\n\n// Si es objeto, extraer payload\nif (typeof valor === 'object' && valor !== null) {\n    valor = valor.payload || valor;\n}\n\n// Convertir a número\nvalor = Number(valor);\nif (isNaN(valor)) valor = 0;\n\n// Redondear\nmsg.payload = Math.round(valor);\n\n// ✅ AGREGAR\nflow.set(\"ventilacion\", msg.payload);\n\nnode.warn(\"Ventilación enviando: \" + msg.payload + \"W\");\n\nreturn msg;",
-  "outputs": 1,
-  "timeout": 0,
-  "noerr": 0,
-  "initialize": "",
-  "finalize": "",
-  "libs": [],
-  "x": 570,
-  "y": 920,
-  "wires": [
-    [
-      "659e2805a965b228",
-      "4ea583d5f77d7bc9",
-      "656ff82c3849e23c"
-    ]
-  ]
-}
+    "id": "99c8f44ff563ffd5",
+    "type": "function",
+    "z": "ec1243374864dca2",
+    "name": "Ventilacion",
+    "func": "let valor = msg.payload;\nif (typeof valor === 'object' && valor !== null) {\n    valor = valor.payload || valor;\n}\nvalor = Number(valor);\nif (isNaN(valor)) valor = 0;\nmsg.payload = Math.round(valor);\nflow.set(\"ventilacion\", msg.payload);\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 570,
+    "y": 920,
+    "w
