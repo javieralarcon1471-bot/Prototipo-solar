@@ -227,7 +227,7 @@
         "style": true,
         "font": "Times New Roman,Times,serif",
         "fontSize": "16",
-        "color": "#ededf2",
+        "color": "#e85d11",
         "x": 1440,
         "y": 240,
         "wires": []
@@ -335,7 +335,7 @@
         "style": true,
         "font": "Times New Roman,Times,serif",
         "fontSize": "15",
-        "color": "#f8f7f7",
+        "color": "#1b1818",
         "x": 1370,
         "y": 340,
         "wires": []
@@ -441,7 +441,7 @@
         "style": true,
         "font": "",
         "fontSize": 16,
-        "color": "#ffffff",
+        "color": "#109820",
         "x": 1350,
         "y": 420,
         "wires": []
@@ -1198,7 +1198,7 @@
         "style": true,
         "font": "",
         "fontSize": "18",
-        "color": "#f8f7f7",
+        "color": "#606057",
         "x": 1560,
         "y": 860,
         "wires": []
@@ -1792,7 +1792,7 @@
         "hidden": false
     },
     {
-        "id": "db03e9b02cfb4802",
+        "id": "9cab13546f0f9384",
         "type": "global-config",
         "env": [],
         "modules": {
