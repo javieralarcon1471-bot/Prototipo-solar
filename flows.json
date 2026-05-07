@@ -1,4 +1,11 @@
-[
+[  {
+    "id": "site-settings",
+    "type": "ui_base",
+    "name": "UI Settings",
+    "path": "/ui",
+    "theme": "dark",
+    "order": 0
+  },
     {
         "id": "80ee16c1451b41a8",
         "type": "inject",
