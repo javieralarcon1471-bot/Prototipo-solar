@@ -1,6 +1,6 @@
 [
     {
-        "id": "9220226561862fc2",
+        "id": "ec1243374864dca2",
         "type": "tab",
         "label": "Flow 1",
         "disabled": false,
@@ -10,7 +10,7 @@
     {
         "id": "80ee16c1451b41a8",
         "type": "inject",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "",
         "props": [
             {
@@ -39,7 +39,7 @@
     {
         "id": "82592bb286961741",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "Generacion Solar (W vs Tiempo)",
         "func": "msg.topic = \"Generación\";\nmsg.payload = Math.floor(Math.random() * 1000) + 200;\n\nflow.set(\"generacion\", msg.payload);\n\nreturn msg;",
         "outputs": 1,
@@ -65,7 +65,7 @@
     {
         "id": "14387adac598fe61",
         "type": "debug",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "debug 1",
         "active": true,
         "tosidebar": true,
@@ -82,7 +82,7 @@
     {
         "id": "6488ea7ef27e3854",
         "type": "ui_chart",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "",
         "group": "4e320cbc564278df",
         "order": 1,
@@ -106,7 +106,7 @@
         "colors": [
             "#1f77b4",
             "#aec7e8",
-            "#edd11d",
+            "#e5cd2e",
             "#2ca02c",
             "#98df8a",
             "#d62728",
@@ -126,7 +126,7 @@
     {
         "id": "a188fab1dcaff439",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "function consumo",
         "func": "// ============================================\n// FUNCIÓN PARA GRÁFICA DE CONSUMO\n// Recibe datos desde \"suma de circuitos\"\n// ============================================\n\n// El valor de consumo real viene en msg.payload\nlet consumoReal = msg.payload;\n\n// Asegurar que sea número\nconsumoReal = Number(consumoReal);\nif (isNaN(consumoReal)) consumoReal = 0;\n\n// Configurar mensaje para la gráfica\nmsg.topic = \"Consumo\";\nmsg.payload = consumoReal;\n\n// Guardar para otros nodos (compatibilidad)\nflow.set(\"consumo\", consumoReal);\n\n// Depuración\nnode.warn(`📊 GRÁFICA CONSUMO REAL: ${consumoReal} W`);\n\nreturn msg;",
         "outputs": 1,
@@ -150,7 +150,7 @@
     {
         "id": "8e2d48aa4a25aa66",
         "type": "ui_chart",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "",
         "group": "a381315b0257b8e7",
         "order": 1,
@@ -194,7 +194,7 @@
     {
         "id": "e5d71496a330fc31",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "Comparacion",
         "func": "let gen = flow.get(\"generacion\");\nlet con = flow.get(\"consumo\");\n\nif (gen === undefined || con === undefined) {\n    return null;\n}\n\nlet estado = gen > con;\nlet mensaje = estado ? \"ENERGÍA SUFICIENTE\" : \"CONSUMO EXCESIVO\";\nlet color = estado ? \"#00ff00\" : \"#ff4444\";\nlet fondo = estado ? \"#0a2e0a\" : \"#2a0000\";\nlet emoji = estado ? \"✅⚡\" : \"⚠️🔥\";\n\nmsg.payload = `\n<div style=\"\n    background: ${fondo};\n    border-radius: 20px;\n    padding: 20px;\n    text-align: center;\n    border: 2px solid ${color};\n    box-shadow: 0 0 20px ${color};\n\">\n    <div style=\"font-size: 48px;\">${emoji}</div>\n    <div style=\"font-size: 22px; font-weight: bold; color: ${color}; margin: 10px 0;\">\n        ${mensaje}\n    </div>\n    <div style=\"font-size: 32px; font-weight: bold;\">\n        <span style=\"color: #00ff00;\">${gen}</span>\n        <span style=\"color: white;\"> vs </span>\n        <span style=\"color: #ff9800;\">${con}</span>\n    </div>\n    <div style=\"font-size: 18px; margin-top: 10px; color: ${color};\">\n        ${estado ? `✔ +${gen - con} W` : `⚠ -${con - gen} W`}\n    </div>\n</div>\n`;\n\nreturn msg;",
         "outputs": 1,
@@ -214,7 +214,7 @@
     {
         "id": "550c58045daf937d",
         "type": "ui_text",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "group": "5615d5019022dac6",
         "order": 1,
         "width": "6",
@@ -227,7 +227,7 @@
         "style": true,
         "font": "Times New Roman,Times,serif",
         "fontSize": "16",
-        "color": "#f59105",
+        "color": "#ededf2",
         "x": 1440,
         "y": 240,
         "wires": []
@@ -235,7 +235,7 @@
     {
         "id": "1b2806463b2decb6",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "Inversor",
         "func": "// Obtener energía del MPPT (no del WiFi)\nlet energiaMPPT = flow.get(\"energia_mppt\") || 500;\n\n// Obtener factor WiFi\nlet factorWiFi = flow.get(\"factor_wifi\") || 1;\n\n// Aplicar factor WiFi a la energía\nlet energiaDC = energiaMPPT * factorWiFi;\n\nlet eficiencia = 0.9;\nlet salida = energiaDC * eficiencia;\n\nmsg.payload = Math.round(salida);\n\nnode.warn(`Inversor: ${energiaMPPT}W (MPPT) × ${factorWiFi} (WiFi) × 0.9 = ${msg.payload}W`);\n\n// Guardar para otros nodos\nflow.set(\"energia_ac\", msg.payload);\n\nreturn msg;",
         "outputs": 1,
@@ -258,7 +258,7 @@
     {
         "id": "3976f46b68afcfcd",
         "type": "ui_chart",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "",
         "group": "4e320cbc564278df",
         "order": 2,
@@ -302,7 +302,7 @@
     {
         "id": "2b99915d5786bcf2",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "Eficiencia",
         "func": "let gen = flow.get(\"generacion\") || 0;\nlet con = flow.get(\"consumo\") || 0;\n\nif (gen === 0 || con === 0) {\n    return null;\n}\n\n// nueva fórmula coherente\nlet eficiencia = (gen / con) * 100;\n\n// limitar a 100% máximo\nif (eficiencia > 100) {\n    eficiencia = 100;\n}\n\nmsg.payload = eficiencia.toFixed(2) + \" %\";\n\nreturn msg;",
         "outputs": 1,
@@ -322,7 +322,7 @@
     {
         "id": "465ee2f04dfd25cd",
         "type": "ui_text",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "group": "5615d5019022dac6",
         "order": 2,
         "width": "0",
@@ -335,7 +335,7 @@
         "style": true,
         "font": "Times New Roman,Times,serif",
         "fontSize": "15",
-        "color": "#f4930b",
+        "color": "#f8f7f7",
         "x": 1370,
         "y": 340,
         "wires": []
@@ -343,7 +343,7 @@
     {
         "id": "0a4584301b160bd3",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "Alerta Consumo",
         "func": "let consumo = msg.payload;\n\nif (consumo > 900) {\n    msg.payload = \"🔴 Sobreconsumo\";\n} else if (consumo > 600) {\n    msg.payload = \"🟡 Consumo medio\";\n} else {\n    msg.payload = \"🟢 Consumo normal\";\n}\n\nreturn msg;",
         "outputs": 1,
@@ -363,7 +363,7 @@
     {
         "id": "97cab898aca29b28",
         "type": "ui_text",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "group": "5615d5019022dac6",
         "order": 3,
         "width": "6",
@@ -384,7 +384,7 @@
     {
         "id": "0660f4a9a62cbd82",
         "type": "ui_chart",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "",
         "group": "4e320cbc564278df",
         "order": 3,
@@ -428,7 +428,7 @@
     {
         "id": "170563e1871e8617",
         "type": "ui_text",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "group": "6b0ae36dd36b3544",
         "order": 9,
         "width": "6",
@@ -441,7 +441,7 @@
         "style": true,
         "font": "",
         "fontSize": 16,
-        "color": "#110de3",
+        "color": "#ffffff",
         "x": 1350,
         "y": 420,
         "wires": []
@@ -449,7 +449,7 @@
     {
         "id": "b70f3344ed8222fc",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "Microcontrolador",
         "func": "let entrada = msg.payload;\nlet salida = entrada * 0.98;\n\nmsg.payload = salida;\n\nflow.set(\"entrada_mcu\", entrada);\nflow.set(\"salida_mcu\", salida);\n\nreturn msg;",
         "outputs": 1,
@@ -473,7 +473,7 @@
     {
         "id": "5b6f092ea13c8002",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "Texto MCU",
         "func": "let entrada = flow.get(\"entrada_mcu\");\nlet salida = flow.get(\"salida_mcu\");\n\nif (entrada === undefined || salida === undefined) {\n    return null;\n}\n\nmsg.payload = \"Entrada: \" + entrada.toFixed(2) +\n    \" W → Salida: \" + salida.toFixed(2) + \" W\";\n\nreturn msg;\n",
         "outputs": 1,
@@ -493,7 +493,7 @@
     {
         "id": "c7c295c17eee0201",
         "type": "inject",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "Radiacion solar",
         "props": [
             {
@@ -524,7 +524,7 @@
     {
         "id": "8e57d10b639442b9",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "Radiacion",
         "func": "// ============================================\n// RADIACIÓN SOLAR (TEMPERATURA LIGADA)\n// ============================================\n\n// 1. Generar radiación\nlet radiacion = Math.floor(Math.random() * 1200);\n\n// 2. Calcular temperatura y porcentajes SEGÚN radiación\nlet temperatura;\nlet climaTexto;\nlet pClima, pVentila, pEquipos, pIlumina;\n\nif (radiacion <= 200) {\n    temperatura = 20;\n    climaTexto = \"🌧️ Nublado\";\n    pClima = 0.00;\n    pVentila = 0.00;\n    pEquipos = 0.40;\n    pIlumina = 0.60;\n}\nelse if (radiacion <= 400) {\n    temperatura = 23;\n    climaTexto = \"🌥️ Parcial nublado\";\n    pClima = 0.00;\n    pVentila = 0.15;\n    pEquipos = 0.35;\n    pIlumina = 0.50;\n}\nelse if (radiacion <= 600) {\n    temperatura = 25;\n    climaTexto = \"🌤️ Soleado suave\";\n    pClima = 0.00;\n    pVentila = 0.30;\n    pEquipos = 0.35;\n    pIlumina = 0.35;\n}\nelse if (radiacion <= 800) {\n    temperatura = 27;\n    climaTexto = \"☀️ Soleado moderado\";\n    pClima = 0.15;\n    pVentila = 0.30;\n    pEquipos = 0.30;\n    pIlumina = 0.25;\n}\nelse if (radiacion <= 1000) {\n    temperatura = 29;\n    climaTexto = \"🔆 Soleado fuerte\";\n    pClima = 0.35;\n    pVentila = 0.20;\n    pEquipos = 0.25;\n    pIlumina = 0.20;\n}\nelse {\n    temperatura = 32;\n    climaTexto = \"🔥 Muy caluroso\";\n    pClima = 0.50;\n    pVentila = 0.15;\n    pEquipos = 0.20;\n    pIlumina = 0.15;\n}\n\n// 3. Guardar variables\nflow.set(\"radiacion_solar\", radiacion);\nflow.set(\"temperatura\", temperatura);\nflow.set(\"clima_texto\", climaTexto);\nflow.set(\"p_clima\", pClima);\nflow.set(\"p_ventila\", pVentila);\nflow.set(\"p_equipos\", pEquipos);\nflow.set(\"p_ilumina\", pIlumina);\n\n// ============================================\n// 4. ENVIAR A MÚLTIPLES SALIDAS\n// ============================================\n\n// Salida 1: MPPT (recibe radiación)\nlet msgMPPT = { payload: radiacion };\n\n// Salida 2: Control Clima (recibe radiación)\nlet msgControl = { payload: radiacion };\n\n// 5. Depuración\nnode.warn(`☀️ ${radiacion}W/m² → 🌡️ ${temperatura}°C | ${climaTexto}`);\nnode.warn(`📊 Aire:${pClima * 100}% | Vent:${pVentila * 100}% | Equip:${pEquipos * 100}% | Luz:${pIlumina * 100}%`);\n\n// Enviar a 2 salidas\nreturn [[msgMPPT], [msgControl]];",
         "outputs": 2,
@@ -549,7 +549,7 @@
     {
         "id": "a18cb7d119d2f30c",
         "type": "ui_chart",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "",
         "group": "4e320cbc564278df",
         "order": 4,
@@ -593,7 +593,7 @@
     {
         "id": "01216a55625c6c97",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "Bateria",
         "func": "// Esta función va ANTES del gauge\nlet bateria_wh = flow.get(\"bateria_wh\") || 15000;\n\n// Enviar SOLO el número (sin texto, sin porcentaje)\nmsg.payload = Math.round(bateria_wh);\n\nreturn msg;",
         "outputs": 1,
@@ -614,7 +614,7 @@
     {
         "id": "293e3d916d35c07c",
         "type": "ui_gauge",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "",
         "group": "5615d5019022dac6",
         "order": 4,
@@ -642,7 +642,7 @@
     {
         "id": "2962f156618cf57c",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "Circuitos",
         "func": "// Energía que llega del inversor\nlet energiaAC = msg.payload || 0;\n\n// Leer porcentajes desde Control Clima\nlet pClima = flow.get(\"p_clima\") || 0.40;\nlet pVentila = flow.get(\"p_ventila\") || 0.15;\nlet pEquipos = flow.get(\"p_equipos\") || 0.25;\nlet pIlumina = flow.get(\"p_ilumina\") || 0.20;\n\n// Calcular consumos\nlet clima = Math.round(energiaAC * pClima);\nlet equipos = Math.round(energiaAC * pEquipos);\nlet iluminacion = Math.round(energiaAC * pIlumina);\nlet ventilacion = Math.round(energiaAC * pVentila);\n\n// Enviar a los 4 circuitos\nreturn [\n    { payload: clima },\n    { payload: equipos },\n    { payload: iluminacion },\n    { payload: ventilacion }\n];",
         "outputs": 4,
@@ -675,7 +675,7 @@
     {
         "id": "159cb61c916a7e4f",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "Climatizacion",
         "func": "msg.payload = msg.payload;\nflow.set(\"climatizacion\", msg.payload);  // ← SOLO AGREGAS ESTA LÍNEA\nreturn msg;",
         "outputs": 1,
@@ -697,7 +697,7 @@
     {
         "id": "25ca3cd0db224cbf",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "Equipos",
         "func": "msg.payload = msg.payload;\nflow.set(\"equipos\", msg.payload);  // ← AGREGAR\nreturn msg;",
         "outputs": 1,
@@ -719,7 +719,7 @@
     {
         "id": "a2d5e8e9ad57d42f",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "Iluminacion",
         "func": "msg.payload = msg.payload;\nflow.set(\"iluminacion\", msg.payload);  // ← AGREGAR\nreturn msg;",
         "outputs": 1,
@@ -741,7 +741,7 @@
     {
         "id": "99c8f44ff563ffd5",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "Ventilacion",
         "func": "// Verificar qué llega\nnode.warn(\"=== NODO VENTILACION ===\");\nnode.warn(\"Payload recibido: \" + JSON.stringify(msg.payload));\n\n// Extraer el valor\nlet valor = msg.payload;\n\n// Si es objeto, extraer payload\nif (typeof valor === 'object' && valor !== null) {\n    valor = valor.payload || valor;\n}\n\n// Convertir a número\nvalor = Number(valor);\nif (isNaN(valor)) valor = 0;\n\n// Redondear\nmsg.payload = Math.round(valor);\n\n// ✅ AGREGAR\nflow.set(\"ventilacion\", msg.payload);\n\nnode.warn(\"Ventilación enviando: \" + msg.payload + \"W\");\n\nreturn msg;",
         "outputs": 1,
@@ -763,7 +763,7 @@
     {
         "id": "974ccf11b59b33fa",
         "type": "ui_gauge",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "",
         "group": "a381315b0257b8e7",
         "order": 4,
@@ -791,7 +791,7 @@
     {
         "id": "598c4f8fe2526502",
         "type": "ui_gauge",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "",
         "group": "a381315b0257b8e7",
         "order": 5,
@@ -819,7 +819,7 @@
     {
         "id": "f6cb0d317a06e555",
         "type": "ui_gauge",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "",
         "group": "a381315b0257b8e7",
         "order": 6,
@@ -847,7 +847,7 @@
     {
         "id": "4ea583d5f77d7bc9",
         "type": "ui_gauge",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "",
         "group": "a381315b0257b8e7",
         "order": 7,
@@ -875,7 +875,7 @@
     {
         "id": "a05cfa5692648562",
         "type": "debug",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "debug 3",
         "active": false,
         "tosidebar": true,
@@ -891,7 +891,7 @@
     {
         "id": "7bcd3e5e77032e05",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "MPPT (Optimización Solar)",
         "func": "let radiacion = Number(msg.payload);\n\nif (isNaN(radiacion) || radiacion < 0) radiacion = 500;\nradiacion = Math.min(radiacion, 1200);\n\nlet eficiencia;\nif (radiacion < 200) {\n    eficiencia = 0.60;\n} else if (radiacion < 600) {\n    eficiencia = 0.75;\n} else {\n    eficiencia = 0.85 + (Math.random() * 0.1);\n}\n\nlet salida = radiacion * eficiencia;\n\n// Para el gauge de potencia (0-1000W)\nmsg.payload = Math.round(salida);\n\n// Guardar eficiencia como porcentaje (0-100)\nlet eficienciaPorcentaje = Math.round(eficiencia * 100);\nflow.set(\"eficiencia_mppt\", eficienciaPorcentaje);\nflow.set(\"energia_mppt\", msg.payload);\nflow.set(\"radiacion_actual\", radiacion);\n\nnode.warn(`🔆 ${radiacion}W/m² → ${eficienciaPorcentaje}% → ${msg.payload}W`);\n\nreturn msg;\n",
         "outputs": 1,
@@ -915,7 +915,7 @@
     {
         "id": "9a884a2cc55a1074",
         "type": "ui_gauge",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "",
         "group": "4e320cbc564278df",
         "order": 6,
@@ -943,7 +943,7 @@
     {
         "id": "85a02716d3c6455f",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "MOSTRAR MPPT",
         "func": "let radiacion = flow.get(\"radiacion_actual\") || 0;\nlet eficiencia = flow.get(\"eficiencia_mppt\") || 0;\nlet potencia = flow.get(\"energia_mppt\") || 0;\n\n// Soles al inicio\nlet soles = \"☀️\";\nif (radiacion > 800) soles = \"☀️☀️☀️\";\nelse if (radiacion > 500) soles = \"☀️☀️\";\nelse if (radiacion > 200) soles = \"☀️\";\nelse soles = \"⛅\";\n\n// Rayos al final\nlet rayos = \"⚡\";\nif (potencia > 700) rayos = \"⚡⚡⚡\";\nelse if (potencia > 400) rayos = \"⚡⚡\";\nelse if (potencia > 100) rayos = \"⚡\";\nelse rayos = \"·\";\n\nmsg.payload = `${soles} ${radiacion} W/m² → ${eficiencia}% → ${rayos} ${potencia} W`;\n\nreturn msg;",
         "outputs": 1,
@@ -963,7 +963,7 @@
     {
         "id": "19a3af67945c13cb",
         "type": "debug",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "debug 7",
         "active": true,
         "tosidebar": true,
@@ -979,7 +979,7 @@
     {
         "id": "10212fc9bed7c3ae",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "Wifi simulado",
         "func": "let calidad = Math.random();\n\nlet estado = \"\";\nlet factor = 1;\nlet congelar = false;  // ← NUEVA variable\n\nif (calidad > 0.7) {\n    estado = \"🟢 Señal buena\";\n    factor = 1;\n    congelar = false;   // ← No congelar\n} else if (calidad > 0.3) {\n    estado = \"🟡 Señal inestable\";\n    factor = 0.5;\n    congelar = false;   // ← No congelar\n} else {\n    estado = \"🔴 Sin conexión\";\n    factor = 0;\n    congelar = true;    // ← CONGELAR datos\n}\n\n// Guardar valores\nflow.set(\"factor_wifi\", factor);\nflow.set(\"estado_wifi\", estado);\nflow.set(\"wifi_congelar\", congelar);  // ← NUEVO: guardar estado de congelación\n\n// Para el dashboard (texto)\nmsg.payload = estado;\n\nnode.warn(`📡 WiFi: calidad=${Math.round(calidad * 100)}%, factor=${factor}, estado=${estado}, congelar=${congelar}`);\n\nreturn msg;",
         "outputs": 1,
@@ -1000,7 +1000,7 @@
     {
         "id": "ed900a4f10ef54ed",
         "type": "ui_text",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "group": "5615d5019022dac6",
         "order": 6,
         "width": "6",
@@ -1021,7 +1021,7 @@
     {
         "id": "d233467ac160f486",
         "type": "debug",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "debug 9",
         "active": true,
         "tosidebar": true,
@@ -1037,7 +1037,7 @@
     {
         "id": "d4de6e89b917a205",
         "type": "debug",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "debug 2",
         "active": true,
         "tosidebar": true,
@@ -1053,7 +1053,7 @@
     {
         "id": "65674213dd9a72e3",
         "type": "debug",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "debug 4",
         "active": true,
         "tosidebar": true,
@@ -1069,7 +1069,7 @@
     {
         "id": "25a05825dc9513e8",
         "type": "debug",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "debug 5",
         "active": true,
         "tosidebar": true,
@@ -1085,7 +1085,7 @@
     {
         "id": "fe738b5809b64869",
         "type": "debug",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "debug 6",
         "active": true,
         "tosidebar": true,
@@ -1101,7 +1101,7 @@
     {
         "id": "8ffbecbbc15563d6",
         "type": "debug",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "debug 10",
         "active": true,
         "tosidebar": true,
@@ -1117,7 +1117,7 @@
     {
         "id": "611bb92e01565ee9",
         "type": "debug",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "debug 11",
         "active": true,
         "tosidebar": true,
@@ -1133,7 +1133,7 @@
     {
         "id": "29c1c38a2f062cf9",
         "type": "debug",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "debug 12",
         "active": true,
         "tosidebar": true,
@@ -1149,7 +1149,7 @@
     {
         "id": "659e2805a965b228",
         "type": "debug",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "debug 13",
         "active": true,
         "tosidebar": true,
@@ -1165,7 +1165,7 @@
     {
         "id": "b31e92e5f4473864",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "Funcion eficiencia",
         "func": "// Extraer eficiencia guardada\nmsg.payload = flow.get(\"eficiencia_mppt\") || 0;\nreturn msg;\n",
         "outputs": 1,
@@ -1185,7 +1185,7 @@
     {
         "id": "2c64b921e231686c",
         "type": "ui_text",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "group": "4e320cbc564278df",
         "order": 7,
         "width": "6",
@@ -1198,7 +1198,7 @@
         "style": true,
         "font": "",
         "fontSize": "18",
-        "color": "#e1f00f",
+        "color": "#f8f7f7",
         "x": 1560,
         "y": 860,
         "wires": []
@@ -1206,7 +1206,7 @@
     {
         "id": "705f0ea326db7c93",
         "type": "ui_text",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "group": "5615d5019022dac6",
         "order": 5,
         "width": 0,
@@ -1227,7 +1227,7 @@
     {
         "id": "0516edf532d66887",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "bateria %",
         "func": "// Esta función va ANTES del texto\nlet bateria_wh = flow.get(\"bateria_wh\") || 15000;\nlet capacidad = 30000;\nlet porcentaje = (bateria_wh / capacidad) * 100;\n\nlet emoji = porcentaje > 70 ? \"🔋🔋🔋\" : porcentaje > 30 ? \"🔋🔋\" : \"🪫⚠️\";\n\nmsg.payload = `${emoji} ${Math.round(porcentaje)}% (${(bateria_wh / 1000).toFixed(1)}/30 kWh)`;\n\nreturn msg;",
         "outputs": 1,
@@ -1248,7 +1248,7 @@
     {
         "id": "e41d420de93a2331",
         "type": "debug",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "debug 14",
         "active": true,
         "tosidebar": true,
@@ -1264,7 +1264,7 @@
     {
         "id": "94b020df3ea2bfc0",
         "type": "debug",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "debug 15",
         "active": true,
         "tosidebar": true,
@@ -1280,7 +1280,7 @@
     {
         "id": "656ff82c3849e23c",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "suma de circuitos",
         "func": "let c1 = flow.get(\"climatizacion\") || 0;\nlet c2 = flow.get(\"equipos\") || 0;\nlet c3 = flow.get(\"iluminacion\") || 0;\nlet c4 = flow.get(\"ventilacion\") || 0;\n\nlet consumoTotal = c1 + c2 + c3 + c4;\nflow.set(\"consumo_total\", consumoTotal);\n\n// ✅ Enviar la SUMA al gauge\nmsg.payload = consumoTotal;\n\nnode.warn(`⚠️ TOTAL CONSUMO: ${c1}+${c2}+${c3}+${c4} = ${consumoTotal} W`);\n\nreturn msg;",
         "outputs": 1,
@@ -1304,7 +1304,7 @@
     {
         "id": "c5c0e5f36dff512e",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "bateria principal",
         "func": "let generacion = flow.get(\"generacion\") || 500;\nlet consumo = flow.get(\"consumo_total\") || 400;\n\nlet capacidadMaxima = 30000;\nlet bateria_wh = flow.get(\"bateria_wh\") || 15000;\n\nlet balance = (generacion - consumo) / 10;\nbateria_wh = bateria_wh + balance;\nbateria_wh = Math.max(0, Math.min(bateria_wh, capacidadMaxima));\n\nflow.set(\"bateria_wh\", bateria_wh);\n\nnode.warn(`🔋 Gen:${generacion}W | Cons:${consumo}W | Bat:${Math.round(bateria_wh)}Wh`);\n\nmsg.payload = bateria_wh;\nreturn msg;",
         "outputs": 1,
@@ -1325,7 +1325,7 @@
     {
         "id": "3d90d488c275ad48",
         "type": "ui_gauge",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "",
         "group": "a381315b0257b8e7",
         "order": 8,
@@ -1353,7 +1353,7 @@
     {
         "id": "5599f2564cba40d2",
         "type": "debug",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "debug 16",
         "active": true,
         "tosidebar": true,
@@ -1369,7 +1369,7 @@
     {
         "id": "6ba0c5c7c481ca5b",
         "type": "debug",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "debug 17",
         "active": true,
         "tosidebar": true,
@@ -1385,7 +1385,7 @@
     {
         "id": "8a08f6f9790c0197",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "Dominante",
         "func": "let c1 = flow.get(\"climatizacion\") || 0;\nlet c2 = flow.get(\"equipos\") || 0;\nlet c3 = flow.get(\"iluminacion\") || 0;\nlet c4 = flow.get(\"ventilacion\") || 0;\n\nlet total = c1 + c2 + c3 + c4;\n\nif (total === 0) {\n    msg.payload = 0;\n    msg.texto = \"Sin datos\";\n    return msg;\n}\n\nlet mayor = Math.max(c1, c2, c3, c4);\nlet porcentaje = Math.round((mayor / total) * 100);\n\nlet nombre = \"\";\nif (mayor === c1) nombre = \"❄️ Climatización\";\nelse if (mayor === c2) nombre = \"💻 Equipos\";\nelse if (mayor === c3) nombre = \"💡 Iluminación\";\nelse nombre = \"🌬️ Ventilación\";\n\nmsg.payload = porcentaje;\nmsg.texto = `${nombre}: ${porcentaje}%`;\n\nreturn msg;",
         "outputs": 1,
@@ -1406,7 +1406,7 @@
     {
         "id": "ef80c9d436831443",
         "type": "ui_gauge",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "",
         "group": "5615d5019022dac6",
         "order": 6,
@@ -1434,7 +1434,7 @@
     {
         "id": "9d9008da47f65728",
         "type": "ui_text",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "group": "5615d5019022dac6",
         "order": 7,
         "width": 0,
@@ -1455,7 +1455,7 @@
     {
         "id": "297a1e91a2c4f585",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "Texto dom",
         "func": "msg.payload = msg.texto;\nreturn msg;",
         "outputs": 1,
@@ -1475,7 +1475,7 @@
     {
         "id": "6f3e4317b5f018b6",
         "type": "ui_gauge",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "",
         "group": "a381315b0257b8e7",
         "order": 3,
@@ -1503,7 +1503,7 @@
     {
         "id": "08281c0898201368",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "function 1",
         "func": "let rad = flow.get(\"radiacion_solar\") || 600;\nmsg.payload = rad;\nmsg.topic = \"Radiación\";\nreturn msg;",
         "outputs": 1,
@@ -1524,7 +1524,7 @@
     {
         "id": "5a1e26a8b1bb2857",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "Temperatura",
         "func": "let temp = flow.get(\"temperatura\") || 25;\nmsg.payload = temp;\nmsg.topic = \"Temperatura\";\nreturn msg;",
         "outputs": 1,
@@ -1546,7 +1546,7 @@
     {
         "id": "952fd54e4686045c",
         "type": "debug",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "debug 19",
         "active": true,
         "tosidebar": true,
@@ -1562,7 +1562,7 @@
     {
         "id": "4add61b82026a2f9",
         "type": "debug",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "debug 20",
         "active": true,
         "tosidebar": true,
@@ -1578,7 +1578,7 @@
     {
         "id": "d5b6b96e42833fe5",
         "type": "debug",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "debug 21",
         "active": true,
         "tosidebar": true,
@@ -1595,7 +1595,7 @@
     {
         "id": "8f1c4762e72002e6",
         "type": "debug",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "debug 8",
         "active": true,
         "tosidebar": true,
@@ -1611,7 +1611,7 @@
     {
         "id": "03bea034969fc5bc",
         "type": "function",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "CONTROL CLIMA",
         "func": "// Recibir radiación desde la Salida 2 de Radiación Solar\nlet radiacion = msg.payload;\n\n// Si no llegó nada, usar valor por defecto\nif (radiacion === undefined || radiacion === null) {\n    radiacion = flow.get(\"radiacion_solar\") || 600;\n}\n\n// Determinar mensaje según radiación\nlet mensaje = \"\";\nif (radiacion < 200) {\n    mensaje = \"🌧️ Día nublado - Sin refrigeración\";\n} else if (radiacion > 800) {\n    mensaje = \"🔴 Aire acondicionado ON\";\n} else {\n    mensaje = \"🟡 Ventiladores ON\";\n}\n\n// Enviar al dashboard\nmsg.payload = mensaje;\n\n// Depuración\nnode.warn(`📢 CONTROL CLIMA: ${mensaje} (Radiación: ${radiacion} W/m²)`);\n\nreturn msg;",
         "outputs": 1,
@@ -1632,7 +1632,7 @@
     {
         "id": "e73bd7279674a785",
         "type": "ui_text",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "group": "6b0ae36dd36b3544",
         "order": 1,
         "width": 0,
@@ -1653,7 +1653,7 @@
     {
         "id": "df21896f16f0de64",
         "type": "debug",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "debug 18",
         "active": true,
         "tosidebar": true,
@@ -1669,7 +1669,7 @@
     {
         "id": "a505dd832d28cdac",
         "type": "ui_chart",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "",
         "group": "4e320cbc564278df",
         "order": 5,
@@ -1713,7 +1713,7 @@
     {
         "id": "70abe89d5de88eec",
         "type": "ui_gauge",
-        "z": "9220226561862fc2",
+        "z": "ec1243374864dca2",
         "name": "",
         "group": "a381315b0257b8e7",
         "order": 2,
@@ -1792,7 +1792,7 @@
         "hidden": false
     },
     {
-        "id": "658131f7e836a5f2",
+        "id": "db03e9b02cfb4802",
         "type": "global-config",
         "env": [],
         "modules": {
