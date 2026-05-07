@@ -1,19 +1,19 @@
-const http = require('http');
 const express = require('express');
+const path = require('path');
 const RED = require('node-red');
 
 const app = express();
-const server = http.createServer(app);
+const server = require('http').createServer(app);
 
 const settings = {
     httpAdminRoot: "/",
     httpNodeRoot: "/api",
-    userDir: "./",
-    flowFile: "flows.json",
-    credentialSecret: "un-secreto-cualquiera",
-    adminAuth: null,
+    userDir: path.join(__dirname, 'data'),
+    flowFile: path.join(__dirname, 'flows.json'),
+    credentialSecret: "un-secreto",
     ui: { path: "ui" },
-    httpStatic: null
+    httpStatic: path.join(__dirname, 'public'),
+    functionGlobalContext: { }
 };
 
 RED.init(server, settings);
@@ -24,8 +24,7 @@ const PORT = process.env.PORT || 1880;
 
 server.listen(PORT, () => {
     console.log(`✅ Node-RED corriendo en puerto ${PORT}`);
-    console.log(`📊 Editor: https://prototipo-solar.onrender.com/`);
-    console.log(`📊 Dashboard: https://prototipo-solar.onrender.com/ui`);
+    console.log(`📊 Dashboard: https://tu-app.onrender.com/ui`);
 });
 
 RED.start();
